@@ -1,0 +1,52 @@
+<div class="min-vh-100 d-flex align-items-center bg-dark">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <h2 class="fw-bold text-primary">TradeVision</h2>
+              <p class="text-muted">Create your account</p>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Username</label>
+                <input type="text" class="form-control" formControlName="username"
+                  placeholder="Choose a username"
+                  [class.is-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched" />
+                <div class="invalid-feedback">Username must be 3–50 characters</div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" class="form-control" formControlName="email"
+                  placeholder="Enter your email"
+                  [class.is-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" />
+                <div class="invalid-feedback">Valid email is required</div>
+              </div>
+              <div class="mb-4">
+                <label class="form-label fw-semibold">Password</label>
+                <input type="password" class="form-control" formControlName="password"
+                  placeholder="Create a password (min 8 characters)"
+                  [class.is-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" />
+                <div class="invalid-feedback">Password must be at least 8 characters</div>
+              </div>
+              <button type="submit" class="btn btn-primary w-100" [disabled]="loading || registerForm.invalid">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                Register
+              </button>
+            </form>
+
+            <div class="text-center mt-3">
+              <p class="text-muted">
+                Already have an account? <a routerLink="/auth/login" class="text-primary">Sign In</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

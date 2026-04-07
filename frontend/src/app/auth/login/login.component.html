@@ -1,0 +1,64 @@
+<div class="min-vh-100 d-flex align-items-center bg-dark">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card shadow-lg border-0">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <h2 class="fw-bold text-primary">TradeVision</h2>
+              <p class="text-muted">Sign in to your account</p>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+              {{ errorMessage }}
+            </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+              <div class="mb-3">
+                <label for="username" class="form-label fw-semibold">Username</label>
+                <input
+                  id="username"
+                  type="text"
+                  class="form-control"
+                  formControlName="username"
+                  placeholder="Enter username"
+                  [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                />
+                <div class="invalid-feedback">Username is required (min 3 characters)</div>
+              </div>
+
+              <div class="mb-4">
+                <label for="password" class="form-label fw-semibold">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Enter password"
+                  [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                />
+                <div class="invalid-feedback">Password is required (min 8 characters)</div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary w-100"
+                [disabled]="loading || loginForm.invalid"
+              >
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                Sign In
+              </button>
+            </form>
+
+            <div class="text-center mt-3">
+              <p class="text-muted">
+                Don't have an account?
+                <a routerLink="/auth/register" class="text-primary">Register</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

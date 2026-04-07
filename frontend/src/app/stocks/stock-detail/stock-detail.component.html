@@ -1,0 +1,39 @@
+<div class="container py-4">
+  <button class="btn btn-link ps-0 mb-3" routerLink="/stocks">← Back to Markets</button>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <ng-container *ngIf="stock && !loading">
+    <div class="row mb-4">
+      <div class="col">
+        <div class="d-flex align-items-center gap-3">
+          <div>
+            <h2 class="fw-bold mb-0">{{ stock.symbol }}</h2>
+            <p class="text-muted mb-0">{{ stock.companyName }}</p>
+          </div>
+          <div class="ms-auto text-end">
+            <h3 class="fw-bold mb-0">${{ stock.currentPrice | number:'1.2-2' }}</h3>
+            <span [class.text-success]="stock.changePercent >= 0" [class.text-danger]="stock.changePercent < 0">
+              {{ stock.changePercent >= 0 ? '+' : '' }}{{ stock.change | number:'1.2-2' }}
+              ({{ stock.changePercent | number:'1.2-2' }}%)
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+      <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><p class="text-muted small mb-1">Previous Close</p><h5 class="fw-bold">${{ stock.previousClose | number:'1.2-2' }}</h5></div></div></div>
+      <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><p class="text-muted small mb-1">Volume</p><h5 class="fw-bold">{{ stock.volume | number }}</h5></div></div></div>
+      <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><p class="text-muted small mb-1">Market Cap</p><h5 class="fw-bold">${{ stock.marketCap | number:'1.0-0' }}</h5></div></div></div>
+      <div class="col-md-3"><div class="card border-0 shadow-sm"><div class="card-body"><p class="text-muted small mb-1">Last Updated</p><h5 class="fw-bold">{{ stock.updatedAt | date:'short' }}</h5></div></div></div>
+    </div>
+
+    <div class="d-flex gap-3">
+      <a [routerLink]="['/trades/execute']" [queryParams]="{symbol: stock.symbol}" class="btn btn-primary">Trade {{ stock.symbol }}</a>
+      <button class="btn btn-outline-secondary" (click)="addToWatchlist()">+ Add to Watchlist</button>
+    </div>
+  </ng-container>
+</div>
