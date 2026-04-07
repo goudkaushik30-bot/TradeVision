@@ -32,6 +32,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (StringUtils.hasText(jwt) && jwtUtil.validateToken(jwt)) {
                 String username = jwtUtil.extractUsername(jwt);
                 String role = jwtUtil.extractRole(jwt);
+                Long userId = jwtUtil.extractUserId(jwt);
+
+                // Use userId as the principal name when available so downstream services
+                // can parse it as a Long; fall back to username for the user-service itself
+                String principalName = (userId != null) ? userId.toString() : username;
 
                 String authority = (role != null && !role.startsWith("ROLE_"))
                         ? "ROLE_" + role
@@ -42,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         : List.of();
 
                 UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(username, null, authorities);
+                        new UsernamePasswordAuthenticationToken(principalName, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

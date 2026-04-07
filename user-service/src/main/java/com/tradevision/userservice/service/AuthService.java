@@ -48,7 +48,7 @@ public class AuthService {
         User saved = userRepository.save(user);
         log.info("Registered new user: {}", saved.getUsername());
 
-        String accessToken = jwtUtil.generateToken(saved.getUsername(), saved.getRole().name());
+        String accessToken = jwtUtil.generateToken(saved.getUsername(), saved.getRole().name(), saved.getId());
         String refreshToken = jwtUtil.generateRefreshToken(saved.getUsername());
 
         return AuthResponse.builder()
@@ -67,7 +67,7 @@ public class AuthService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new TradeVisionException("User not found", HttpStatus.NOT_FOUND));
 
-        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+        String accessToken = jwtUtil.generateToken(user.getUsername(), user.getRole().name(), user.getId());
         String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
 
         log.info("User logged in: {}", username);

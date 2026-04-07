@@ -28,7 +28,7 @@ export class ExecuteTradeComponent implements OnInit {
   ngOnInit(): void {
     const symbol = this.route.snapshot.queryParamMap.get('symbol') || '';
     this.tradeForm = this.fb.group({
-      symbol: [symbol, [Validators.required, Validators.pattern(/^[A-Z]{1,10}$/)]],
+      symbol: [symbol, [Validators.required, Validators.pattern(/^[A-Za-z]{1,10}$/)]],
       quantity: ['', [Validators.required, Validators.min(0.0001)]],
       price: ['', [Validators.required, Validators.min(0.0001)]],
       tradeType: ['BUY', Validators.required],
