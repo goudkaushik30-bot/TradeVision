@@ -1,0 +1,81 @@
+<div class="container-fluid py-4">
+  <h2 class="fw-bold mb-4">My Portfolio</h2>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <ng-container *ngIf="summary && !loading">
+    <div class="row g-4 mb-5">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm"><div class="card-body">
+          <p class="text-muted small mb-1">Total Value</p>
+          <h3 class="fw-bold">${{ summary.totalValue | number:'1.2-2' }}</h3>
+        </div></div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm"><div class="card-body">
+          <p class="text-muted small mb-1">Total Cost</p>
+          <h3 class="fw-bold">${{ summary.totalCost | number:'1.2-2' }}</h3>
+        </div></div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm"><div class="card-body">
+          <p class="text-muted small mb-1">Unrealized P&L</p>
+          <h3 class="fw-bold" [class]="pnlClass">
+            {{ summary.totalProfitLoss >= 0 ? '+' : '' }}${{ summary.totalProfitLoss | number:'1.2-2' }}
+          </h3>
+        </div></div>
+      </div>
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm"><div class="card-body">
+          <p class="text-muted small mb-1">P&L %</p>
+          <h3 class="fw-bold" [class]="pnlClass">
+            {{ summary.totalProfitLossPercent >= 0 ? '+' : '' }}{{ summary.totalProfitLossPercent | number:'1.2-2' }}%
+          </h3>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-0">
+        <h5 class="mb-0 fw-bold">Positions ({{ summary.positionCount }})</h5>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Symbol</th>
+              <th class="text-end">Quantity</th>
+              <th class="text-end">Avg Buy Price</th>
+              <th class="text-end">Current Value</th>
+              <th class="text-end">P&L</th>
+              <th class="text-end">P&L %</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pos of summary.positions">
+              <td class="fw-bold text-primary">{{ pos.symbol }}</td>
+              <td class="text-end">{{ pos.quantity | number:'1.2-4' }}</td>
+              <td class="text-end">${{ pos.avgBuyPrice | number:'1.2-2' }}</td>
+              <td class="text-end fw-semibold">${{ pos.currentValue | number:'1.2-2' }}</td>
+              <td class="text-end" [class.text-success]="pos.profitLoss >= 0" [class.text-danger]="pos.profitLoss < 0">
+                {{ pos.profitLoss >= 0 ? '+' : '' }}${{ pos.profitLoss | number:'1.2-2' }}
+              </td>
+              <td class="text-end" [class.text-success]="pos.profitLossPercent >= 0" [class.text-danger]="pos.profitLossPercent < 0">
+                {{ pos.profitLossPercent >= 0 ? '+' : '' }}{{ pos.profitLossPercent | number:'1.2-2' }}%
+              </td>
+              <td class="text-center">
+                <a class="btn btn-sm btn-primary" [routerLink]="['/trades/execute']" [queryParams]="{symbol: pos.symbol}">Trade</a>
+              </td>
+            </tr>
+            <tr *ngIf="summary.positions.length === 0">
+              <td colspan="7" class="text-center text-muted py-4">No positions. <a routerLink="/trades/execute">Start trading</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</div>

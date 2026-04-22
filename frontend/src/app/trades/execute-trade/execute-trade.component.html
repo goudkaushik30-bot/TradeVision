@@ -1,0 +1,68 @@
+<div class="container py-4">
+  <button class="btn btn-link ps-0 mb-3" routerLink="/trades">← Back to Trades</button>
+  <h2 class="fw-bold mb-4">Execute Trade</h2>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body">
+          <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+          <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+
+          <form [formGroup]="tradeForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Stock Symbol</label>
+              <input type="text" class="form-control text-uppercase" formControlName="symbol"
+                placeholder="e.g. AAPL" (blur)="onSymbolBlur()"
+                [class.is-invalid]="tradeForm.get('symbol')?.invalid && tradeForm.get('symbol')?.touched" />
+              <div class="invalid-feedback">Valid stock symbol required (1-10 uppercase letters)</div>
+            </div>
+
+            <div *ngIf="stock" class="alert alert-info py-2 mb-3">
+              <strong>{{ stock.companyName }}</strong> — Current: ${{ stock.currentPrice | number:'1.2-2' }}
+              <span [class.text-success]="stock.changePercent >= 0" [class.text-danger]="stock.changePercent < 0">
+                ({{ stock.changePercent >= 0 ? '+' : '' }}{{ stock.changePercent | number:'1.2-2' }}%)
+              </span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Trade Type</label>
+              <div class="btn-group w-100">
+                <input type="radio" class="btn-check" formControlName="tradeType" value="BUY" id="buy">
+                <label class="btn btn-outline-success" for="buy">BUY</label>
+                <input type="radio" class="btn-check" formControlName="tradeType" value="SELL" id="sell">
+                <label class="btn btn-outline-danger" for="sell">SELL</label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Quantity</label>
+              <input type="number" class="form-control" formControlName="quantity" step="0.0001" min="0.0001"
+                [class.is-invalid]="tradeForm.get('quantity')?.invalid && tradeForm.get('quantity')?.touched" />
+              <div class="invalid-feedback">Quantity must be greater than 0</div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Price per Share</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" formControlName="price" step="0.01" min="0.01"
+                  [class.is-invalid]="tradeForm.get('price')?.invalid && tradeForm.get('price')?.touched" />
+              </div>
+            </div>
+
+            <div class="alert alert-light border mb-4" *ngIf="estimatedTotal > 0">
+              <strong>Estimated Total:</strong> ${{ estimatedTotal | number:'1.2-2' }}
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100"
+              [disabled]="submitting || tradeForm.invalid">
+              <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+              {{ tradeForm.get('tradeType')?.value === 'BUY' ? 'Buy' : 'Sell' }} Shares
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

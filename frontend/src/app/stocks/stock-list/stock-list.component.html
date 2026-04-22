@@ -1,0 +1,50 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Markets</h2>
+    <div class="input-group" style="max-width: 300px;">
+      <span class="input-group-text">🔍</span>
+      <input type="text" class="form-control" placeholder="Search stocks..."
+        (input)="onSearch($any($event.target).value)" />
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <div class="card border-0 shadow-sm" *ngIf="!loading">
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Symbol</th>
+            <th>Company</th>
+            <th class="text-end">Price</th>
+            <th class="text-end">Change</th>
+            <th class="text-end">% Change</th>
+            <th class="text-end">Volume</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stock of filteredStocks" [routerLink]="['/stocks', stock.symbol]" style="cursor:pointer">
+            <td class="fw-bold text-primary">{{ stock.symbol }}</td>
+            <td class="text-muted">{{ stock.companyName }}</td>
+            <td class="text-end fw-semibold">${{ stock.currentPrice | number:'1.2-2' }}</td>
+            <td class="text-end" [class.text-success]="stock.change >= 0" [class.text-danger]="stock.change < 0">
+              {{ stock.change >= 0 ? '+' : '' }}{{ stock.change | number:'1.2-2' }}
+            </td>
+            <td class="text-end" [class.text-success]="stock.changePercent >= 0" [class.text-danger]="stock.changePercent < 0">
+              {{ stock.changePercent >= 0 ? '+' : '' }}{{ stock.changePercent | number:'1.2-2' }}%
+            </td>
+            <td class="text-end text-muted">{{ stock.volume | number }}</td>
+            <td class="text-center">
+              <button class="btn btn-sm btn-outline-primary me-1" (click)="addToWatchlist(stock.symbol, $event)">+ Watch</button>
+              <a class="btn btn-sm btn-primary" [routerLink]="['/trades/execute']" [queryParams]="{symbol: stock.symbol}" (click)="$event.stopPropagation()">Trade</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

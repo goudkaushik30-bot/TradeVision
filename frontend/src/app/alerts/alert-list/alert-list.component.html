@@ -1,0 +1,91 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Price Alerts</h2>
+    <button class="btn btn-primary" (click)="showForm = !showForm">
+      {{ showForm ? 'Cancel' : '+ New Alert' }}
+    </button>
+  </div>
+
+  <!-- Create Alert Form -->
+  <div class="card border-0 shadow-sm mb-4" *ngIf="showForm">
+    <div class="card-body">
+      <h5 class="card-title fw-bold mb-3">Create Alert</h5>
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+      <form [formGroup]="alertForm" (ngSubmit)="createAlert()" class="row g-3">
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Symbol</label>
+          <input type="text" class="form-control text-uppercase" formControlName="symbol" placeholder="e.g. AAPL"
+            [class.is-invalid]="alertForm.get('symbol')?.invalid && alertForm.get('symbol')?.touched" />
+          <div class="invalid-feedback">Valid stock symbol required</div>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Alert Type</label>
+          <select class="form-select" formControlName="alertType">
+            <option value="PRICE_ABOVE">Price Above</option>
+            <option value="PRICE_BELOW">Price Below</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Target Price</label>
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" class="form-control" formControlName="targetPrice" step="0.01" min="0.01"
+              [class.is-invalid]="alertForm.get('targetPrice')?.invalid && alertForm.get('targetPrice')?.touched" />
+          </div>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+          <button type="submit" class="btn btn-success w-100" [disabled]="submitting || alertForm.invalid">
+            <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+            Create Alert
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <div class="card border-0 shadow-sm" *ngIf="!loading">
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Symbol</th>
+            <th>Alert Type</th>
+            <th class="text-end">Target Price</th>
+            <th>Status</th>
+            <th>Triggered At</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let alert of alerts">
+            <td class="fw-bold text-primary">{{ alert.symbol }}</td>
+            <td>
+              <span class="badge" [class.bg-success]="alert.alertType === 'PRICE_ABOVE'" [class.bg-warning]="alert.alertType === 'PRICE_BELOW'" [class.text-dark]="alert.alertType === 'PRICE_BELOW'">
+                {{ alert.alertType === 'PRICE_ABOVE' ? '▲ Above' : '▼ Below' }}
+              </span>
+            </td>
+            <td class="text-end fw-semibold">${{ alert.targetPrice | number:'1.2-2' }}</td>
+            <td>
+              <span class="badge" [class.bg-success]="alert.active" [class.bg-secondary]="!alert.active">
+                {{ alert.active ? 'Active' : 'Triggered' }}
+              </span>
+            </td>
+            <td class="text-muted small">{{ alert.triggeredAt ? (alert.triggeredAt | date:'short') : '—' }}</td>
+            <td class="text-muted small">{{ alert.createdAt | date:'short' }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-danger" (click)="deleteAlert(alert.id)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="alerts.length === 0">
+            <td colspan="7" class="text-center text-muted py-4">No alerts yet. Create one to get notified!</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
